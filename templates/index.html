@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Multi-Model Classifier</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Background Section -->
+    <div class="bg-image"></div>
+
+    <!-- Main content Section -->
+    <div class="container mt-5">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">Plant Leaf Disease Multi-Model Classifier</a>
+        </nav>
+
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Upload an Image for Classification</h1>
+            <p class="lead">Select a model and upload an image for accurate disease detection.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+               <form id="uploadForm" method="POST" enctype="multipart/form-data" class="bg-light p-4 rounded shadow-sm">
+                    <div class="form-group">
+                        <label for="model_name">Select Model:</label>
+                        <select name="model_name" id="model_name" class="form-control" required>
+                            {% for model in models %}
+                                <option value="{{ model }}">{{ model.capitalize() }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="file">Upload Image (JPG, PNG, GIF):</label>
+                        <input type="file" name="file" id="file" accept="image/*" class="form-control" required>
+                        <small class="form-text text-muted">Only image files are supported.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Upload and Predict</button>
+                </form>
+
+                <!-- Progress Bar -->
+                <div class="progress mt-3" style="height: 25px; display: none;" id="progressContainer">
+                    <div class="progress-bar progress-bar-striped" id="progressBar" role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="text-center mt-4 py-4 bg-dark text-white">
+        <p>&copy; 2024 Multi-Model Classifier | Built with ❤️ using Flask</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Handle form submission via AJAX
+            $('#uploadForm').on('submit', function (e) {
+                e.preventDefault();  // Prevent the default form submission
+
+                // Show the progress bar
+                $('#progressContainer').show();
+
+                // AJAX request
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '/predict',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    xhr: function () {
+                        var xhr = new XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var percent = e.loaded / e.total * 100;
+                                $('#progressBar').css('width', percent + '%');
+                                $('#progressBar').text(Math.round(percent) + '%');
+                            }
+                        });
+                        return xhr;
+                    },
+                    success: function (data) {
+                        // Redirect to results page
+                        window.location.href = data.redirect_url;
+                    },
+                    error: function (xhr) {
+                        alert("An error occurred: " + xhr.responseJSON.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

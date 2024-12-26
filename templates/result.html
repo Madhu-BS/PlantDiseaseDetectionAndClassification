@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Background Section -->
+    <div class="bg-image"></div>
+
+    <!-- Main content Section -->
+    <div class="container mt-5">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">Plant Disease Classifier</a>
+        </nav>
+
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Prediction Result</h1>
+            <p class="lead">The model analyzed the image and classified it as:</p>
+
+            <!-- Display the predicted label -->
+            <h2 class="text-success mb-4">{{ label }}</h2>
+
+            <!-- Display the uploaded image -->
+            <div class="mt-4">
+                <img src="{{ url_for('static', filename=image_file) }}" alt="Uploaded Image" class="img-fluid rounded shadow" style="max-height: 400px; object-fit: cover;">
+            </div>
+
+            <!-- Display prediction confidence or recommendation -->
+            <div class="alert alert-info mt-4">
+                <strong>Recommendation:</strong> If the plant is unhealthy, consider consulting agricultural experts for effective treatment.
+            </div>
+
+            <!-- Button to go back to the home page -->
+            <a href="/" class="btn btn-primary btn-lg mt-4">Upload Another Image</a>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="text-center mt-4 py-4 bg-dark text-white">
+        <p>&copy; 2024 Multi-Model Classifier | Built with ❤️ using Flask</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
